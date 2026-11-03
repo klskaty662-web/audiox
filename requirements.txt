@@ -3,5 +3,5 @@ pandas
 folium
 streamlit-folium
 numpy
-pyarrow
 openpyxl
+pyarrow
