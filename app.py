@@ -80,7 +80,6 @@ if df is None:
         df_cargado = pd.read_excel(uploaded_file, sheet_name=selected_sheet)
         
         # --- LIMPIEZA Y NORMALIZACIÓN FLEXIBLE DE COLUMNAS ---
-        # Renombrar columnas comunes si vienen con acentos, mayúsculas o nombres distintos
         renombres = {}
         for col in df_cargado.columns:
             col_lower = str(col).strip().lower()
@@ -112,7 +111,6 @@ if df is not None:
     
     st.divider()
     
-    # Cargar el plan guardado al inicio para evitar errores de variables
     df_plan_guardado = None
     if os.path.exists(ARCHIVADO_PLAN):
         try:
@@ -250,9 +248,7 @@ if df is not None:
                         
                         grupo_crudo = pool.head(t_totales).copy()
                         
-                        if ancla['distancia_base_km'] >= 35 or grupo_crudo['distancia_base_km'].mean() >= 35:
-                            t_totales = min(t_totales, 5)
-                            grupo_crudo = pool.head(t_totales).copy()
+                        # --- SE REMOVIÓ EL LÍMITE DE 35 KM QUE FORZABA MÁXIMO 5 TIENDAS ---
                         
                         grupo_ordenado = ordenar_ruta_dia(grupo_crudo)
                         grupo_ordenado['Grupo_Dia'] = dia
@@ -328,7 +324,7 @@ if df is not None:
             dia_seleccionado = st.selectbox("Elige el día de auditoría a consultar:", dias_unicos, format_func=lambda x: f"Día {x}")
 
             mask_dia = df_plan_guardado['Grupo_Dia'] == dia_seleccionado
-            grupo_activo = df_plan_guardado[mask_sid := mask_dia].sort_values(by='Orden_Visita')
+            grupo_activo = df_plan_guardado[mask_dia].sort_values(by='Orden_Visita')
 
             st.markdown(f"### 📋 Lista de Verificación - Día {dia_seleccionado}")
             st.info("Marca las casillas de las tiendas que **sí se evaluaron** durante la jornada. Al terminar, haz clic en 'Cerrar Día' para enlistar las no evaluadas en la pestaña superior de pendientes.")
